@@ -48,7 +48,10 @@ public class CustomersController {
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
-  @PostMapping
+  @PostMapping(
+    consumes = MediaType.APPLICATION_JSON_VALUE,
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
   // @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customer) {
 
