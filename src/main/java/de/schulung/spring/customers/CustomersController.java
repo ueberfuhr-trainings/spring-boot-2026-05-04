@@ -1,6 +1,7 @@
 package de.schulung.spring.customers;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,10 @@ import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/customers")
+@RequiredArgsConstructor
 public class CustomersController {
 
-  private final CustomersService customersService = new CustomersService();
+  private final CustomersService customersService;
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public Stream<Customer> getCustomers(
