@@ -1,5 +1,6 @@
 package de.schulung.spring.customers;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +51,7 @@ public class CustomersController {
 
   @PostMapping
   // @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+  public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customer) {
 
     customer.setUuid(UUID.randomUUID());
     customers.put(customer.getUuid(), customer);

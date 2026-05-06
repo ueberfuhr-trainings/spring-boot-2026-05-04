@@ -1,5 +1,7 @@
 package de.schulung.spring.customers;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,8 +13,12 @@ import java.util.UUID;
 public class Customer {
 
   private UUID uuid;
+  @NotNull
   private String name;
+  @NotNull
   private LocalDate birthdate;
+  @Pattern(regexp = "active|locked|disabled")
   private String state = "active";
+
 
 }
