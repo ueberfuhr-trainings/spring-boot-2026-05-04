@@ -1,6 +1,8 @@
 package de.schulung.spring.customers;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -336,5 +338,75 @@ public class CustomersApiTests {
       .perform(delete("/customers/{uuid}", uuid))
       .andExpect(status().isNotFound());
   }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+    // missing comma
+    """
+      {
+         "name": "Tom Mayer"
+         "birthdate": "2005-05-12",
+         "state": "active"
+      }
+      """,
+    // invalid date
+    """
+      {
+         "name": "Tom Mayer",
+         "birthdate": "gelbekatze",
+         "state": "active"
+      }
+      """,
+    // invalid state
+    """
+      {
+         "name": "Tom Mayer",
+         "birthdate": "2005-05-12",
+         "state": "gelbekatze"
+      }
+      """,
+    // missing birthdate date
+    """
+      {
+         "name": "Tom Mayer",
+         "state": "active"
+      }
+      """,
+    // missing name
+    """
+      {
+         "birthdate": "2005-05-12",
+         "state": "active"
+      }
+      """,
+    // with uuid
+    """
+      {
+         "uuid": "bf7f440b-c9de-4eb8-91f4-43108277e9a3",
+         "name": "Tom Mayer",
+         "birthdate": "2005-05-12",
+         "state": "active"
+      }
+      """,
+    // unknown property
+    """
+      {
+         "name": "Tom Mayer",
+         "birthdate": "2005-05-12",
+         "state": "active",
+         "gelbekatze": "gruenerfuchs"
+      }
+      """,
+  })
+  void shouldNotCreateInvalidCustomer(String body) throws Exception {
+    mockMvc.perform(
+        post("/customers")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(body)
+          .accept(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(status().isBadRequest());
+  }
+
 
 }
