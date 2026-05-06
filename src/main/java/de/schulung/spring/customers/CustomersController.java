@@ -1,6 +1,7 @@
 package de.schulung.spring.customers;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,26 +17,25 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/customers")
+@RequiredArgsConstructor
 public class CustomersController {
 
-  private final Map<UUID, Customer> customers = new ConcurrentHashMap<>();
+  private final CustomersService customersService;
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public Stream<Customer> getCustomers(
     @RequestParam(value = "state", required = false)
     String stateFilter
   ) {
-    return customers
-      .values()
-      .stream()
-      .filter(customer -> stateFilter == null || customer.getState().equals(stateFilter));
+    return
+      stateFilter == null
+        ? customersService.getCustomers()
+        : customersService.getCustomersByState(stateFilter);
   }
 
   @GetMapping(
@@ -43,18 +43,19 @@ public class CustomersController {
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   public Customer findCustomerById(@PathVariable UUID uuid) {
-    if (!customers.containsKey(uuid)) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    }
-    return customers.get(uuid);
+    return customersService
+      .getCustomerByUuid(uuid)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
-  @PostMapping
+  @PostMapping(
+    consumes = MediaType.APPLICATION_JSON_VALUE,
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
   // @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customer) {
 
-    customer.setUuid(UUID.randomUUID());
-    customers.put(customer.getUuid(), customer);
+    customersService.createCustomer(customer);
 
     final var location = ServletUriComponentsBuilder
       .fromCurrentRequest()
@@ -71,10 +72,10 @@ public class CustomersController {
   @DeleteMapping("/{uuid}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteCustomer(@PathVariable UUID uuid) {
-    if (!customers.containsKey(uuid)) {
+    if (!customersService.existsCustomerByUuid(uuid)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
-    customers.remove(uuid);
+    customersService.deleteCustomer(uuid);
   }
 
 
