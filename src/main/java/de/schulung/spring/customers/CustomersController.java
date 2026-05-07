@@ -1,6 +1,7 @@
 package de.schulung.spring.customers;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,6 +31,7 @@ public class CustomersController {
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public Stream<Customer> getCustomers(
     @RequestParam(value = "state", required = false)
+    @Pattern(regexp = "active|locked|disabled")
     String stateFilter
   ) {
     return

@@ -408,5 +408,15 @@ public class CustomersApiTests {
       .andExpect(status().isBadRequest());
   }
 
+  @Test
+  void shouldValidateStateParameterWhenGetCustomers() throws Exception {
+    mockMvc.perform(
+        get("/customers")
+          .param("state", "gelbekatze")
+          .accept(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(status().isBadRequest());
+  }
+
 
 }
