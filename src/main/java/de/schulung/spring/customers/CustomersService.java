@@ -2,49 +2,48 @@ package de.schulung.spring.customers;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 @Validated
 @Service
+@RequiredArgsConstructor
 public class CustomersService {
 
-  private final Map<UUID, Customer> customers = new ConcurrentHashMap<>();
+  private final CustomersRepository repo;
 
   public Stream<Customer> getCustomers() {
-    return customers
-      .values()
+    return repo
+      .findAll()
       .stream();
   }
 
   public Stream<Customer> getCustomersByState(String state) {
-    return this
-      .getCustomers()
-      .filter(customer -> customer.getState().equals(state));
+    return repo
+      .findCustomerByState(state)
+      .stream();
   }
 
   public Optional<Customer> getCustomerByUuid(UUID uuid) {
-    return Optional
-      .ofNullable(customers.get(uuid));
+    return repo
+      .findById(uuid);
   }
 
   public void createCustomer(@NotNull @Valid Customer customer) {
-    customer.setUuid(UUID.randomUUID());
-    customers.put(customer.getUuid(), customer);
+    repo.save(customer);
   }
 
   public boolean existsCustomerByUuid(UUID uuid) {
-    return customers.containsKey(uuid);
+    return repo.existsById(uuid);
   }
 
   public void deleteCustomer(UUID uuid) {
-    customers.remove(uuid);
+    repo.deleteById(uuid);
   }
 
 
