@@ -10,7 +10,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(
+  properties = {
+    "application.cors.enabled=true",
+    "application.cors.allowed-origins=*.swagger.io"
+  }
+)
 @AutoConfigureMockMvc
 public class CorsTests {
 

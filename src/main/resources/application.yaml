@@ -3,3 +3,7 @@ spring:
     deserialization:
       fail-on-unknown-properties: true
       fail-on-ignored-properties: true
+application:
+  cors:
+    enabled: ${CORS_ENABLED:false}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:''}

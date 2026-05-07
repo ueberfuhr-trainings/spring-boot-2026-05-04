@@ -1,6 +1,8 @@
 package de.schulung.spring.customers;
 
 import jakarta.annotation.Nonnull;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -17,10 +19,20 @@ import static org.springframework.http.HttpHeaders.LOCATION;
 import static org.springframework.http.HttpHeaders.ORIGIN;
 
 @Configuration
+/*
+@ConditionalOnBooleanProperty(
+  name = "application.cors.enabled",
+  havingValue = true,
+  matchIfMissing = false
+)
+*/
+@ConditionalOnBooleanProperty("application.cors.enabled")
 public class CorsConfiguration {
 
   @Bean
-  WebMvcConfigurer corsConfigurer() {
+  WebMvcConfigurer corsConfigurer(
+    @Value("${application.cors.allowed-origins}") String origins
+  ) {
     return new WebMvcConfigurer() {
       @Override
       public void addCorsMappings(@Nonnull CorsRegistry registry) {
@@ -29,7 +41,7 @@ public class CorsConfiguration {
           .exposedHeaders(LOCATION, LINK)
           .allowedHeaders(ORIGIN, CONTENT_TYPE, ACCEPT, ACCEPT_LANGUAGE, IF_MATCH, IF_NONE_MATCH, AUTHORIZATION)
           .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
-          .allowedOriginPatterns("*.swagger.io")
+          .allowedOriginPatterns(origins)
           .allowCredentials(false);
       }
     };
