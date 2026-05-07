@@ -1,6 +1,9 @@
 package de.schulung.spring.customers;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Map;
 import java.util.Optional;
@@ -8,6 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
+@Validated
 @Service
 public class CustomersService {
 
@@ -30,7 +34,7 @@ public class CustomersService {
       .ofNullable(customers.get(uuid));
   }
 
-  public void createCustomer(Customer customer) {
+  public void createCustomer(@NotNull @Valid Customer customer) {
     customer.setUuid(UUID.randomUUID());
     customers.put(customer.getUuid(), customer);
   }
