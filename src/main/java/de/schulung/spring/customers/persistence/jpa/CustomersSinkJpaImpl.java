@@ -1,8 +1,9 @@
-package de.schulung.spring.customers.persistence;
+package de.schulung.spring.customers.persistence.jpa;
 
 import de.schulung.spring.customers.domain.Customer;
 import de.schulung.spring.customers.domain.CustomersSink;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -10,6 +11,11 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 @Component
+@ConditionalOnProperty(
+  name = "application.persistence.type",
+  havingValue = "jpa",
+  matchIfMissing = true
+)
 @RequiredArgsConstructor
 public class CustomersSinkJpaImpl
   implements CustomersSink {
