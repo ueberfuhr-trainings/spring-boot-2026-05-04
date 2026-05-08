@@ -21,30 +21,38 @@ public class CustomersSinkJpaImpl
   implements CustomersSink {
 
   private final CustomersRepository repo;
+  private final CustomerEntityMapper mapper;
+
 
   @Override
   public Stream<Customer> findAll() {
     return repo
       .findAll()
-      .stream();
+      .stream()
+      .map(mapper::map);
   }
 
   @Override
   public Stream<Customer> findByState(String state) {
     return repo
       .findCustomerByState(state)
-      .stream();
+      .stream()
+      .map(mapper::map);
   }
 
   @Override
   public Optional<Customer> findById(UUID uuid) {
     return repo
-      .findById(uuid);
+      .findById(uuid)
+      .map(mapper::map);
   }
 
   @Override
   public void save(Customer customer) {
-    repo.save(customer);
+    var entity = mapper.map(customer);
+    repo.save(entity);
+    // customer.setUuid(entity.getUuid());
+    mapper.copy(entity, customer);
   }
 
   @Override
