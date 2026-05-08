@@ -1,6 +1,5 @@
 package de.schulung.spring.customers.domain;
 
-import de.schulung.spring.customers.persistence.CustomersRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -16,35 +15,33 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class CustomersService {
 
-  private final CustomersRepository repo;
+  private final CustomersSink sink;
 
   public Stream<Customer> getCustomers() {
-    return repo
-      .findAll()
-      .stream();
+    return sink
+      .findAll();
   }
 
   public Stream<Customer> getCustomersByState(String state) {
-    return repo
-      .findCustomerByState(state)
-      .stream();
+    return sink
+      .findByState(state);
   }
 
   public Optional<Customer> getCustomerByUuid(UUID uuid) {
-    return repo
+    return sink
       .findById(uuid);
   }
 
   public void createCustomer(@NotNull @Valid Customer customer) {
-    repo.save(customer);
+    sink.save(customer);
   }
 
   public boolean existsCustomerByUuid(UUID uuid) {
-    return repo.existsById(uuid);
+    return sink.existsById(uuid);
   }
 
   public void deleteCustomer(UUID uuid) {
-    repo.deleteById(uuid);
+    sink.deleteById(uuid);
   }
 
 
