@@ -1,6 +1,5 @@
 package de.schulung.spring.customers.persistence.jpa;
 
-import de.schulung.spring.customers.domain.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,8 +8,8 @@ import java.util.UUID;
 
 @Repository
 public interface CustomersRepository
-  extends JpaRepository<Customer, UUID> {
+  extends JpaRepository<CustomerEntity, UUID> {
 
-  List<Customer> findCustomerByState(String state);
+  List<CustomerEntity> findCustomerByState(String state);
 
 }

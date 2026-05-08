@@ -1,6 +1,5 @@
 package de.schulung.spring.customers.boundary;
 
-import de.schulung.spring.customers.domain.Customer;
 import de.schulung.spring.customers.domain.CustomersService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
@@ -29,26 +28,31 @@ import java.util.stream.Stream;
 public class CustomersController {
 
   private final CustomersService customersService;
+  private final CustomerDtoMapper mapper;
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public Stream<Customer> getCustomers(
+  public Stream<CustomerDto> getCustomers(
     @RequestParam(value = "state", required = false)
     @Pattern(regexp = "active|locked|disabled")
     String stateFilter
   ) {
     return
-      stateFilter == null
-        ? customersService.getCustomers()
-        : customersService.getCustomersByState(stateFilter);
+      (
+        stateFilter == null
+          ? customersService.getCustomers()
+          : customersService.getCustomersByState(mapper.mapState(stateFilter))
+      ).map(mapper::map);
+
   }
 
   @GetMapping(
     path = "/{uuid}",
     produces = MediaType.APPLICATION_JSON_VALUE
   )
-  public Customer findCustomerById(@PathVariable UUID uuid) {
+  public CustomerDto findCustomerById(@PathVariable UUID uuid) {
     return customersService
       .getCustomerByUuid(uuid)
+      .map(mapper::map)
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
@@ -57,19 +61,21 @@ public class CustomersController {
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   // @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customer) {
+  public ResponseEntity<CustomerDto> createCustomer(@Valid @RequestBody CustomerDto customerDto) {
 
+    var customer = mapper.map(customerDto);
     customersService.createCustomer(customer);
+    var responseDto = mapper.map(customer);
 
     final var location = ServletUriComponentsBuilder
       .fromCurrentRequest()
       .path("/{uuid}")
-      .buildAndExpand(customer.getUuid())
+      .buildAndExpand(responseDto.getUuid())
       .toUri();
 
     return ResponseEntity
       .created(location)
-      .body(customer);
+      .body(responseDto);
 
   }
 

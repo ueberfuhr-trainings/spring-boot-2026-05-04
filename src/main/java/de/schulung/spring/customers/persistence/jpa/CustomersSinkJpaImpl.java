@@ -1,6 +1,7 @@
 package de.schulung.spring.customers.persistence.jpa;
 
 import de.schulung.spring.customers.domain.Customer;
+import de.schulung.spring.customers.domain.CustomerState;
 import de.schulung.spring.customers.domain.CustomersSink;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,30 +22,38 @@ public class CustomersSinkJpaImpl
   implements CustomersSink {
 
   private final CustomersRepository repo;
+  private final CustomerEntityMapper mapper;
+
 
   @Override
   public Stream<Customer> findAll() {
     return repo
       .findAll()
-      .stream();
+      .stream()
+      .map(mapper::map);
   }
 
   @Override
-  public Stream<Customer> findByState(String state) {
+  public Stream<Customer> findByState(CustomerState state) {
     return repo
-      .findCustomerByState(state)
-      .stream();
+      .findCustomerByState(mapper.mapState(state))
+      .stream()
+      .map(mapper::map);
   }
 
   @Override
   public Optional<Customer> findById(UUID uuid) {
     return repo
-      .findById(uuid);
+      .findById(uuid)
+      .map(mapper::map);
   }
 
   @Override
   public void save(Customer customer) {
-    repo.save(customer);
+    var entity = mapper.map(customer);
+    repo.save(entity);
+    // customer.setUuid(entity.getUuid());
+    mapper.copy(entity, customer);
   }
 
   @Override

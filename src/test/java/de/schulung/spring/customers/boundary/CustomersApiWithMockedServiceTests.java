@@ -1,6 +1,7 @@
 package de.schulung.spring.customers.boundary;
 
 import de.schulung.spring.customers.domain.Customer;
+import de.schulung.spring.customers.domain.CustomerState;
 import de.schulung.spring.customers.domain.CustomersService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class CustomersApiWithMockedServiceTests {
     customer.setUuid(uuid);
     customer.setName("Tom Mayer");
     customer.setBirthdate(LocalDate.of(2005, 5, 5));
-    customer.setState("active");
+    customer.setState(CustomerState.ACTIVE);
 
     when(customersService.getCustomerByUuid(uuid))
       .thenReturn(Optional.of(customer));
