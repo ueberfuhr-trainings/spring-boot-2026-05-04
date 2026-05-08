@@ -1,6 +1,7 @@
 package de.schulung.spring.customers.persistence.jpa;
 
 import de.schulung.spring.customers.domain.Customer;
+import de.schulung.spring.customers.domain.CustomerState;
 import de.schulung.spring.customers.domain.CustomersSink;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -33,9 +34,9 @@ public class CustomersSinkJpaImpl
   }
 
   @Override
-  public Stream<Customer> findByState(String state) {
+  public Stream<Customer> findByState(CustomerState state) {
     return repo
-      .findCustomerByState(state)
+      .findCustomerByState(mapper.mapState(state))
       .stream()
       .map(mapper::map);
   }

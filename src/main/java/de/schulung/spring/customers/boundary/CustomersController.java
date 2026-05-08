@@ -40,7 +40,7 @@ public class CustomersController {
       (
         stateFilter == null
           ? customersService.getCustomers()
-          : customersService.getCustomersByState(stateFilter)
+          : customersService.getCustomersByState(mapper.mapState(stateFilter))
       ).map(mapper::map);
 
   }
