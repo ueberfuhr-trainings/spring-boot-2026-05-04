@@ -1,5 +1,6 @@
-package de.schulung.spring.customers;
+package de.schulung.spring.customers.persistence;
 
+import de.schulung.spring.customers.domain.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
