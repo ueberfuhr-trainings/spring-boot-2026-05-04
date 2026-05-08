@@ -1,5 +1,6 @@
-package de.schulung.spring.customers;
+package de.schulung.spring.customers.domain;
 
+import de.schulung.spring.customers.persistence.CustomersRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;

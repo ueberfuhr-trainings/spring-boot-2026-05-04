@@ -1,5 +1,7 @@
-package de.schulung.spring.customers;
+package de.schulung.spring.customers.boundary;
 
+import de.schulung.spring.customers.domain.Customer;
+import de.schulung.spring.customers.domain.CustomersService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;

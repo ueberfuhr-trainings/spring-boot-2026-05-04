@@ -1,4 +1,4 @@
-package de.schulung.spring.customers;
+package de.schulung.spring.customers.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
